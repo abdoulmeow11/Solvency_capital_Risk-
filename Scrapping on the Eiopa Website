@@ -1,0 +1,104 @@
+Eiopa_curve_with_no_va = function ( period = 1:150, country = "Euro" ){
+
+  curve = NULL 
+
+  previous_date = as.POSIXlt(Sys.time())
+
+  if ( previous_date$mday < 10 ){
+    previous_date$mon = previous_date$mon - 2
+  } else ( previous_date$mon = previous_date$mon - 1 )
+
+  last_date = as.Date(format(as.Date(previous_date) + 31, "%Y-%m-01")) - 1  #dernier jour du mois 
+
+  file_number = gsub("-","",last_date)
+
+  link = gsub("20170531",file_number,"https://eiopa.europa.eu/Publications/Standards/EIOPA_RFR_20170531.zip")
+
+  temp = tempfile()
+
+  download.file(link,temp,mode = "wb")
+  
+  file_link = gsub("20170531",file_number,"EIOPA_RFR_20170531_Term_Structures.xlsx")
+
+  unzip(temp, file_link)
+
+  #install.packages("openxlsx")
+  
+  test_package=installed.packages()[,1]
+  test_p= "openxlsx" %in% test_package
+  if(test_p==T){
+    "the package openxlsx is already installed";
+  }else(install.packages("openxlsx"))
+
+  library(openxlsx)
+
+  curve = read.xlsx(file_link,sheet=2,rows = 11:160,cols=3:55,colNames = F)
+# print(curve)
+# print(length(curve[1,]))
+  colnames(curve) = NULL
+  
+  if(country=="Euro"){
+   curve = curve[,1]
+   }else if(country=="Austria"){curve = curve[,2]
+   }else if(country=="Belgium"){curve = curve[,3]
+   }else if(country=="Bulgaria"){curve = curve[,4]
+   }else if(country=="Croatia"){curve = curve[,5]
+   }else if(country=="Cyprus"){curve = curve[,6]
+   }else if(country=="Czech Republic"){curve = curve[,7]
+   }else if(country=="Denmark"){curve = curve[,8]
+   }else if(country=="Estonia"){curve = curve[,9]
+   }else if(country=="Finland"){curve = curve[,10]
+   }else if(country=="France"){curve = curve[,11]
+   }else if(country=="Germany"){curve = curve[,12]
+   }else if(country=="Greece"){curve = curve[,13]
+   }else if(country=="Hungary"){curve = curve[,14]
+   }else if(country=="Iceland"){curve = curve[,15]
+   }else if(country=="Ireland"){curve = curve[,16]
+   }else if(country=="Italy"){curve = curve[,17]
+   }else if(country=="Latvia"){curve = curve[,18]
+   }else if(country=="Liechtenstein"){curve = curve[,19]
+   }else if(country=="Lithuania"){curve = curve[,20]
+   }else if(country=="Luxembourg"){curve = curve[,21]
+   }else if(country=="Malta"){curve = curve[,22]
+   }else if(country=="Netherlands"){curve = curve[,23]
+   }else if(country=="Norway"){curve = curve[,24]
+   }else if(country=="Poland"){curve = curve[,25]
+   }else if(country=="Portugal"){curve = curve[,26]
+   }else if(country=="Romania"){curve = curve[,27]
+   }else if(country=="Russia"){curve = curve[,28]
+   }else if(country=="Slovakia"){curve = curve[,29]
+   }else if(country=="Slovenia"){curve = curve[,30]
+   }else if(country=="Spain"){curve = curve[,31]
+   }else if(country=="Sweden"){curve = curve[,32]
+   }else if(country=="Switzerland"){curve = curve[,33]
+   }else if(country=="United Kingdom"){curve = curve[,34]
+   }else if(country=="Australia"){curve = curve[,35]
+   }else if(country=="Brazil"){curve = curve[,36]
+   }else if(country=="Canada"){curve = curve[,37]
+   }else if(country=="Chile"){curve = curve[,38]
+   }else if(country=="China"){curve = curve[,39]
+   }else if(country=="Colombia"){curve = curve[,40]
+   }else if(country=="Hong Kong"){curve = curve[,41]
+   }else if(country=="India"){curve = curve[,42]
+   }else if(country=="Japan"){curve = curve[,43]
+   }else if(country=="Malaysia"){curve = curve[,44]
+   }else if(country=="Mexico"){curve = curve[,45]
+   }else if(country=="New Zealand"){curve = curve[,46]
+   }else if(country=="Singapore"){curve = curve[,47]
+   }else if(country=="South Africa"){curve = curve[,48]
+   }else if(country=="South Korea"){curve = curve[,49]
+   }else if(country=="Taiwan"){curve = curve[,50]
+   }else if(country=="Thailand"){curve = curve[,51]
+   }else if(country=="Turkey"){curve = curve[,52]
+   }else if(country=="United States"){curve = curve[,53]
+   }
+  
+  
+
+  curve = curve
+
+  unlink(temp)
+  
+  return(curve[period])
+
+}
